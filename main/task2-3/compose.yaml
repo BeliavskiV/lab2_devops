@@ -1,0 +1,45 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: task2_3_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  producer:
+    build: ./producer
+    container_name: task2_3_producer
+    environment:
+      RABBIT_HOST: rabbitmq
+    volumes:
+      - ./data/producer:/var/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer:
+    build: ./consumer
+    container_name: task2_3_consumer
+    environment:
+      RABBIT_HOST: rabbitmq
+    volumes:
+      - ./data/consumer:/var/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: task2_3_ai_agent
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:

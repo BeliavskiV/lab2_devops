@@ -1,0 +1,17 @@
+services:
+  worker1:
+    build: ./worker1
+    container_name: task1_worker1
+    volumes:
+      - ./data:/var/data
+      - ./result-1:/var/result
+
+  worker2:
+    build: ./worker2
+    container_name: task1_worker2
+    volumes:
+      - ./result-1:/var/data
+      - ./result:/var/result
+    depends_on:
+      worker1:
+        condition: service_completed_successfully

@@ -1,0 +1,8 @@
+# .gitignore и .dockerignore
+__pycache__/
+*.pyc
+.env
+result-1/*
+result/*
+!result-1/.gitkeep
+!result/.gitkeep
